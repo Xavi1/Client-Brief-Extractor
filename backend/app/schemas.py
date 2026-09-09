@@ -1,4 +1,5 @@
 # app/schemas.py
+from typing import List, Optional, Literal
 from pydantic import BaseModel, Field
 
 
@@ -15,3 +16,4 @@ class ClientBrief(BaseModel):
     currency: str | None = None
     deadline: str | None = None
     missing_information: list[str]
+    extraction_confidence: Literal["high", "medium", "low"] 
