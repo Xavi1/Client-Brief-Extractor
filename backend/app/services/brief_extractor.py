@@ -23,22 +23,15 @@ async def extract_client_brief(message: str) -> ClientBrief:
             model=settings.MODEL_NAME,
             contents=prompt,
             config=types.GenerateContentConfig(
-                response_mime_type="application/json"
+                response_mime_type="application/json",
+                response_schema=ClientBrief,  # <-- Native schema binding
+                temperature=0.1,             # Low temperature for precise, deterministic extraction
             ),
         )
         
         if not response.text:
-            raise ValueError("Gemini returned an empty response.")
-
-        # Clean markdown wrappers if Gemini returned them (e.g., ```json ... ```)
-        clean_text = response.text.strip()
-        if clean_text.startswith("```"):
-            lines = clean_text.splitlines()
-            if lines[0].startswith("```json") or lines[0].startswith("```"):
-                clean_text = "\n".join(lines[1:-1])
-
-        # Validate the JSON data cleanly against your Pydantic schema
-        return ClientBrief.model_validate_json(clean_text)
+            raise ValueError("Gemini returned a response, but it could not be parsed into the schema.")
+        return response.parsed
         
     except Exception as e:
         # CRITICAL: This will dump the full, raw trace into your uvicorn window so you can read it.
