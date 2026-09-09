@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     MODEL_API_KEY: str
-    MODEL_NAME: str = "gemini-2.5-flash"  # Defaulting to Google's fast free-tier model
+    MODEL_NAME: str = "gemini-3.6-flash"  # Defaulting to Google's fast free-tier model
 
     # Look for .env one folder level up from this file (inside /backend)
     model_config = SettingsConfigDict(
