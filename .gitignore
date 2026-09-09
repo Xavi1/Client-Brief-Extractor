@@ -10,5 +10,4 @@ wheels/
 .venv
 
 # Environment Files
-.env
-.env.example
+.env*
