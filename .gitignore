@@ -11,3 +11,4 @@ wheels/
 
 # Environment Files
 .env
+.env.example
