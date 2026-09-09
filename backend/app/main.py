@@ -6,7 +6,7 @@ from app.services.brief_extractor import (
     BriefExtractionError,
     extract_client_brief,
 )
-from app.config import settings
+from app.settings import settings
 
 app = FastAPI(title="Client Brief Extractor")
 
