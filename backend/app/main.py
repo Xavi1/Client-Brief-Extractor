@@ -6,6 +6,7 @@ from app.services.brief_extractor import (
     BriefExtractionError,
     extract_client_brief,
 )
+from app.config import settings
 
 app = FastAPI(title="Client Brief Extractor")
 
@@ -13,6 +14,15 @@ app = FastAPI(title="Client Brief Extractor")
 @app.get("/health")
 async def health_check() -> dict[str, str]:
     return {"status": "healthy"}
+
+@app.get("/info")
+def get_model_info():
+    return {
+        "message": "Settings loaded successfully!",
+        "model_name": settings.MODEL_NAME,
+        # Avoid exposing your actual API key entirely in production logs/responses
+        "api_key_configured": bool(settings.MODEL_API_KEY) 
+    }
 
 
 @app.post("/briefs/extract", response_model=ClientBrief)
