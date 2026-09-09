@@ -1,5 +1,4 @@
 # app/services/brief_extractor.py
-import json
 import traceback
 from google import genai
 from google.genai import types
@@ -16,19 +15,7 @@ async def extract_client_brief(message: str) -> ClientBrief:
     try:
         prompt = (
             "You are an expert system analyst. Analyze the following raw client message, email, "
-            "or brief. Extract all relevant details into JSON matching this structure:\n"
-            "{\n"
-            "  \"client_name\": string or null,\n"
-            "  \"business_type\": string or null,\n"
-            "  \"project_type\": string,\n"
-            "  \"requested_features\": [string],\n"
-            "  \"budget\": number or null,\n"
-            "  \"currency\": string or null,\n"
-            "  \"deadline\": string or null,\n"
-            "  \"missing_information\": [string]\n"
-            "  \"extraction_confidence\": \"high\" | \"medium\" | \"low\"\n"
-            "}\n\n"
-            f"Client Message:\n{message}"
+            f"or brief and extract all relevant details accurately.\n\nClient Message:\n{message}"
         )
         
         # Enforce JSON output mode explicitly
