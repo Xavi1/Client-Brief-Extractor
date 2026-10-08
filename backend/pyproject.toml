@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "client-brief-extractor-backend"
+version = "0.1.0"
+description = "FastAPI backend for extracting structured client briefs"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "google-genai",
+    "pydantic",
+    "pydantic-settings",
+    "uvicorn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx",
+    "pytest",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-v"
+testpaths = ["../tests"]
+pythonpath = ["."]
