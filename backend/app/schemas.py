@@ -15,5 +15,6 @@ class ClientBrief(BaseModel):
     budget: float | None = Field(default=None, ge=0)
     currency: str | None = None
     deadline: str | None = None
+    timeline_notes: str | None = None
     missing_information: list[str]
     extraction_confidence: Literal["high", "medium", "low"] 
