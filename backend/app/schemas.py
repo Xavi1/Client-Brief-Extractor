@@ -17,4 +17,6 @@ class ClientBrief(BaseModel):
     deadline: str | None = None
     timeline_notes: str | None = None
     missing_information: list[str]
-    extraction_confidence: Literal["high", "medium", "low"] 
+    extraction_confidence: Literal["high", "medium", "low"]
+    constraints: list[str] = Field(default_factory=list)
+    budget_notes: str | None = None
