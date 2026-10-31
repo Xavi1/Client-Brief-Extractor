@@ -1,10 +1,19 @@
 # app/schemas.py
-from typing import List, Optional, Literal
-from pydantic import BaseModel, Field
+from typing import Literal
+from pydantic import AliasChoices, BaseModel, Field, field_validator
 
 
 class ClientBriefRequest(BaseModel):
-    message: str = Field(min_length=10, max_length=10_000)
+    message: str = Field(
+        min_length=10,
+        max_length=10_000,
+        validation_alias=AliasChoices("message", "prompt"),
+    )
+
+    @field_validator("message", mode="before")
+    @classmethod
+    def trim_message(cls, value: object) -> object:
+        return value.strip() if isinstance(value, str) else value
 
 
 class ClientBrief(BaseModel):

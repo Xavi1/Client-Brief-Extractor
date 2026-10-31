@@ -92,16 +92,11 @@ async def extract_client_brief(message: str) -> ClientBrief:
         if not message or len(message.strip()) < 10:
             raise BriefExtractionError("Message is too short or empty to extract a valid client brief.")
 
-        prompt = (
-             f"{EXTRACTION_INSTRUCTIONS}\n\n"
-            f"CLIENT MESSAGE:\n"
-            f"{message}"
-        )
-        
         response = await client.aio.models.generate_content(
             model=settings.MODEL_NAME,
-            contents=prompt,
+            contents=f"CLIENT MESSAGE:\n{message}",
             config=types.GenerateContentConfig(
+                system_instruction=EXTRACTION_INSTRUCTIONS,
                 response_mime_type="application/json",
                 response_schema=ClientBrief,
                 temperature=0.1,
