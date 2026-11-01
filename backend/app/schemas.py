@@ -19,44 +19,73 @@ class ClientBriefRequest(BaseModel):
 class ClientBrief(BaseModel):
     company_name: str | None = Field(
         description=(
-            "The explicitly stated name of the company or business "
-            "associated with the project. Extract names such as "
-            "'Oak & Home' from phrases like 'I own a furniture company "
-            "called Oak & Home'. Do not use the owner's personal name. "
-            "Return null if no business name is stated."
+            "The explicitly stated company or business name. "
+            "Extract names such as Oak & Home. Return null "
+            "when no company name is stated."
         )
     )
-    business_type: str | None = None
-    project_type: str
-    requested_features: list[str]
-    budget: float | None = Field(
-    default=None,
-    ge=0,
-    description=(
-        "The numeric budget amount only, without currency symbols "
-        "or formatting. For example, PHP 120,000 must be extracted "
-        "as 120000. Return null only if no budget amount is stated."
+
+    business_type: str | None = Field(
+        description=(
+            "The type of business, such as furniture company "
+            "or bakery. Return null if not stated."
+        )
     )
-)
+
+    project_type: str | None = Field(
+        description=(
+            "The complete project type, such as ecommerce website "
+            "or mobile application. Return null if unknown."
+        )
+    )
+
+    requested_features: list[str] = Field(
+        description="Explicitly requested functional features."
+    )
+
+    budget: float | None = Field(
+        ge=0,
+        description=(
+            "The numeric budget amount without currency symbols "
+            "or separators. Return null only when no amount "
+            "is provided."
+        )
+    )
+
     currency: str | None = Field(
-    default=None,
+        description=(
+            "The ISO 4217 currency code, such as PHP or USD. "
+            "Return null if no currency is identifiable."
+        )
+    )
+
+    deadline: str | None = Field(
+        description="A concrete deadline formatted as YYYY-MM-DD. "
+                    "Return null if no concrete date is provided."
+    )
+
+    timeline_notes: str | None = Field(
     description=(
-        "The ISO 4217 currency code associated with the budget. "
-        "For example, PHP for Philippine pesos, USD for US dollars. "
-        "Extract the currency whenever it is explicitly stated."
+        "Additional vague, approximate, or conditional timing "
+        "information not already represented by deadline. "
+        "Do not repeat a concrete deadline. Return null when "
+        "no additional timeline context is provided."
     )
 )
 
-    deadline: str | None = None
-    timeline_notes: str | None = None
     missing_information: list[str] = Field(
-    default_factory=list,
-    description=(
-        "Important project information that the client has not "
-        "provided. Include the budget if no budget amount was given. "
-        "Do not list the budget as missing when an amount was supplied."
+        description="Important project information not yet provided."
     )
-)
+
     extraction_confidence: Literal["high", "medium", "low"]
-    constraints: list[str] = Field(default_factory=list)
-    budget_notes: str | None = None
+
+    constraints: list[str] = Field(
+        description="Explicit project restrictions and negative requirements."
+    )
+
+    budget_notes: str | None = Field(
+        description=(
+            "Additional budget qualifications, flexibility, or ranges. "
+            "Return null if no additional budget context is provided."
+        )
+    )
