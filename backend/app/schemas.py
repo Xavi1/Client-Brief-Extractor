@@ -21,11 +21,34 @@ class ClientBrief(BaseModel):
     business_type: str | None = None
     project_type: str
     requested_features: list[str]
-    budget: float | None = Field(default=None, ge=0)
-    currency: str | None = None
+    budget: float | None = Field(
+    default=None,
+    ge=0,
+    description=(
+        "The numeric budget amount only, without currency symbols "
+        "or formatting. For example, PHP 120,000 must be extracted "
+        "as 120000. Return null only if no budget amount is stated."
+    )
+)
+    currency: str | None = Field(
+    default=None,
+    description=(
+        "The ISO 4217 currency code associated with the budget. "
+        "For example, PHP for Philippine pesos, USD for US dollars. "
+        "Extract the currency whenever it is explicitly stated."
+    )
+)
+
     deadline: str | None = None
     timeline_notes: str | None = None
-    missing_information: list[str]
+    missing_information: list[str] = Field(
+    default_factory=list,
+    description=(
+        "Important project information that the client has not "
+        "provided. Include the budget if no budget amount was given. "
+        "Do not list the budget as missing when an amount was supplied."
+    )
+)
     extraction_confidence: Literal["high", "medium", "low"]
     constraints: list[str] = Field(default_factory=list)
     budget_notes: str | None = None
