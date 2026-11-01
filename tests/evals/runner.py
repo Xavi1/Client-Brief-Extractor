@@ -42,7 +42,12 @@ def evaluate_result(case: dict, result) -> list[tuple[str, bool, str]]:
     for field, expected_value in expected.items():
 
         # These require special evaluation logic.
-        if field in ("required_features", "forbidden_values"):
+        if field in (
+            "required_features",
+            "forbidden_values",
+            "contains",
+            "non_empty",
+        ):
             continue
 
         actual_value = actual.get(field)
@@ -55,7 +60,42 @@ def evaluate_result(case: dict, result) -> list[tuple[str, bool, str]]:
             f"Expected: {expected_value!r}, Actual: {actual_value!r}"
         ))
 
-    # 2. Check that all required features were extracted.
+    # 2. Check that selected fields contain useful information.
+    for field in expected.get("non_empty", []):
+        actual_value = actual.get(field)
+        passed = (
+            bool(actual_value.strip())
+            if isinstance(actual_value, str)
+            else bool(actual_value)
+        )
+        checks.append((
+            f"Field is not empty: {field}",
+            passed,
+            f"Actual value: {actual_value!r}"
+        ))
+
+    # Check that expected phrases appear in text fields or list entries.
+    for field, phrases in expected.get("contains", {}).items():
+        actual_value = actual.get(field)
+        actual_values = (
+            actual_value if isinstance(actual_value, list)
+            else [actual_value]
+        )
+
+        for phrase in phrases:
+            target = normalize(phrase)
+            found = any(
+                target in normalize(str(value))
+                for value in actual_values
+                if value is not None
+            )
+            checks.append((
+                f"Expected text in {field}: {phrase}",
+                found,
+                f"Actual value: {actual_value!r}"
+            ))
+
+    # 3. Check that all required features were extracted.
     actual_features = actual.get("requested_features", [])
 
     for feature in expected.get("required_features", []):
@@ -72,7 +112,7 @@ def evaluate_result(case: dict, result) -> list[tuple[str, bool, str]]:
             f"Actual features: {actual_features}"
         ))
 
-    # 3. Check that forbidden values were NOT extracted.
+    # 4. Check that forbidden values were NOT extracted.
     for field, forbidden_values in expected.get(
         "forbidden_values", {}
     ).items():
