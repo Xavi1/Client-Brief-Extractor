@@ -119,5 +119,16 @@ Rules:
 - If there are no additional budget qualifications,
   return null.
 
+12. DEADLINE AND TIMELINE NOTES
+
+- deadline must contain only a concrete date in YYYY-MM-DD format.
+- timeline_notes must contain additional vague or approximate
+  timing information that cannot be represented by deadline.
+- Do not duplicate an explicit deadline in timeline_notes.
+- If the client provides only a concrete deadline and no
+  additional timing context, return timeline_notes as null.
+- If both a concrete deadline and additional timing
+  preferences are provided, preserve both separately.
+
 Return information matching the provided response schema.
 """
