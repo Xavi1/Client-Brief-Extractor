@@ -12,6 +12,14 @@ FOLLOW THESE RULES:
 - Never invent client details, features, budgets, or deadlines.
 - Represent unavailable information using null or an empty list,
   as appropriate for the response schema.
+- Extract each field independently. Do not omit a stated budget or
+  currency because another field is unknown.
+- Return the complete, concise project type; do not shorten
+  "ecommerce website" to only "ecommerce".
+- Preserve the stated business type, such as "furniture company",
+  rather than replacing it with a broader category like "furniture".
+- Use company_name only for an explicitly named business, not an
+  owner's personal name.
 
 2. CONSISTENCY
 - Use consistent terminology for business types and project types.
@@ -84,6 +92,7 @@ Expected extraction:
 - budget: 120000
 - currency: PHP
 - budget_notes: null
+- missing_information must not say that the budget is unknown.
 
 Rules:
 - Always extract explicit numerical budget amounts.
