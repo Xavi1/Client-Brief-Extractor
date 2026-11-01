@@ -1,4 +1,5 @@
 import asyncio
+import json
 from types import SimpleNamespace
 import pytest
 from unittest.mock import AsyncMock, patch
@@ -10,6 +11,7 @@ from app.services.brief_extractor import (
     EXTRACTION_INSTRUCTIONS,
     extract_client_brief,
 )
+from app.services.ollama_extractor import extract_client_brief_local
 
 client = TestClient(app)
 
@@ -105,6 +107,43 @@ def test_extraction_instructions_cover_regression_fields():
     assert "missing_information must not say that the budget is unknown" in (
         instructions
     )
+
+
+@patch(
+    "app.services.ollama_extractor.client.chat",
+    new_callable=AsyncMock,
+)
+def test_local_extraction_requires_and_extracts_named_company(mock_chat):
+    """Ollama schema and prompt require named business extraction."""
+    extracted_data = {
+        "company_name": "Oak & Home",
+        "business_type": "furniture company",
+        "project_type": "ecommerce website",
+        "requested_features": ["product catalog"],
+        "budget": 120000,
+        "currency": "PHP",
+        "deadline": "2026-12-01",
+        "timeline_notes": None,
+        "missing_information": [],
+        "extraction_confidence": "high",
+        "constraints": [],
+        "budget_notes": None,
+    }
+    mock_chat.return_value = SimpleNamespace(
+        message=SimpleNamespace(content=json.dumps(extracted_data))
+    )
+
+    result = asyncio.run(
+        extract_client_brief_local(
+            "I own a furniture company called Oak & Home. "
+            "We need an ecommerce website with a product catalog."
+        )
+    )
+
+    assert result.company_name == "Oak & Home"
+    call = mock_chat.await_args.kwargs
+    assert "company_name" in call["format"]["required"]
+    assert "company called Oak & Home" in call["messages"][0]["content"]
 
 
 # ------------------------------------------------------------------
