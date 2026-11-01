@@ -17,5 +17,108 @@
         "budget": [1000000]
       }
     }
+  },
+  {
+    "id": "complete_brief",
+    "description": "Extract all explicitly provided client, project, feature, and budget details.",
+    "input": "I'm Maya Santos, owner of Luna Home Furnishings. We need an ecommerce website to sell our furniture. It must include a product catalog, shopping cart, online payments, order tracking, and an admin dashboard for managing products. Our budget is PHP 250,000.",
+    "expected": {
+      "client_name": "Maya Santos",
+      "business_type": "Furniture",
+      "project_type": "Ecommerce website",
+      "budget": 250000,
+      "currency": "PHP",
+      "required_features": [
+        "product catalog",
+        "shopping cart",
+        "online payments",
+        "order tracking",
+        "admin dashboard"
+      ]
+    }
+  },
+  {
+    "id": "incomplete_brief",
+    "description": "Identify important unknown requirements rather than inventing them.",
+    "input": "I run a small bakery and want a website where customers can view our cakes and contact us. I haven't decided on a budget, launch date, or whether customers should order online.",
+    "expected": {
+      "budget": null,
+      "deadline": null,
+      "non_empty": [
+        "missing_information"
+      ],
+      "contains": {
+        "missing_information": [
+          "budget",
+          "launch",
+          "order"
+        ]
+      }
+    }
+  },
+  {
+    "id": "vague_deadline",
+    "description": "Do not turn a vague timing request into a concrete deadline.",
+    "input": "I need a portfolio website for my photography business with a gallery and contact form. Please have it ready as soon as possible.",
+    "expected": {
+      "deadline": null,
+      "contains": {
+        "timeline_notes": [
+          "as soon as possible"
+        ]
+      }
+    }
+  },
+  {
+    "id": "conflicting_requirements",
+    "description": "Preserve contradictory checkout requirements and flag them for clarification.",
+    "input": "I need an online store. Customers must be able to check out without creating an account, but every customer must create an account before they can check out.",
+    "expected": {
+      "required_features": [
+        "checkout"
+      ],
+      "contains": {
+        "missing_information": [
+          "account",
+          "checkout"
+        ]
+      }
+    }
+  },
+  {
+    "id": "flexible_budget",
+    "description": "Keep the target budget and preserve its stated flexibility.",
+    "input": "I want a website for my tutoring business. My target budget is PHP 120,000, but I can stretch it by up to PHP 30,000 if the required scope justifies it.",
+    "expected": {
+      "budget": 120000,
+      "currency": "PHP",
+      "contains": {
+        "budget_notes": [
+          "30,000"
+        ]
+      }
+    }
+  },
+  {
+    "id": "negative_constraints",
+    "description": "Record an explicit restriction without inventing alternative payment methods.",
+    "input": "Build an ecommerce website for my handmade crafts with a product catalog and shopping cart. Do not accept online payments.",
+    "expected": {
+      "required_features": [
+        "product catalog",
+        "shopping cart"
+      ],
+      "contains": {
+        "constraints": [
+          "online payment"
+        ]
+      },
+      "forbidden_values": {
+        "requested_features": [
+          "cash on delivery",
+          "bank transfer"
+        ]
+      }
+    }
   }
 ]
