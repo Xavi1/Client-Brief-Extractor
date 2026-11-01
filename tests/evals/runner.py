@@ -164,7 +164,7 @@ async def run_evaluations():
 
         try:
             # Send the test message to the actual Gemini service.
-            result = await extract_client_brief(case["input"])
+            result = await extract_with_retry(case["input"])
 
             # Evaluate the returned ClientBrief.
             checks = evaluate_result(case, result)
@@ -215,6 +215,36 @@ async def run_evaluations():
 
     print("===================================\n")
 
+
+async def extract_with_retry(message: str, max_attempts: int = 3):
+    """
+    Retry Gemini extraction when the provider temporarily
+    returns a 503 UNAVAILABLE error.
+    """
+
+    for attempt in range(1, max_attempts + 1):
+        try:
+            return await extract_client_brief(message)
+
+        except Exception as error:
+
+            is_temporary_error = (
+                "503" in str(error)
+                and "UNAVAILABLE" in str(error)
+            )
+
+            if not is_temporary_error or attempt == max_attempts:
+                raise
+
+            delay = 2 ** attempt
+
+            print(
+                f"[RETRY] Gemini unavailable. "
+                f"Attempt {attempt}/{max_attempts}. "
+                f"Retrying in {delay} seconds..."
+            )
+
+            await asyncio.sleep(delay)
 
 if __name__ == "__main__":
     asyncio.run(run_evaluations())
