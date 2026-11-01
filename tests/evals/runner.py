@@ -52,7 +52,10 @@ def evaluate_result(case: dict, result) -> list[tuple[str, bool, str]]:
 
         actual_value = actual.get(field)
 
-        passed = actual_value == expected_value
+        if isinstance(actual_value, str) and isinstance(expected_value, str):
+            passed = normalize(actual_value) == normalize(expected_value)
+        else:
+            passed = actual_value == expected_value
 
         checks.append((
             f"{field} matches expected value",
