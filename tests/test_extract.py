@@ -15,6 +15,16 @@ from app.services.ollama_extractor import extract_client_brief_local
 
 client = TestClient(app)
 
+
+def test_all_client_brief_fields_are_required():
+    schema = ClientBrief.model_json_schema()
+
+    required_fields = set(schema["required"])
+    expected_fields = set(ClientBrief.model_fields.keys())
+
+    assert required_fields == expected_fields
+
+
 # ------------------------------------------------------------------
 # Fixtures
 # ------------------------------------------------------------------
@@ -34,8 +44,11 @@ def mock_extracted_brief():
         budget=5000.0,
         currency="USD",
         deadline=None,
+        timeline_notes=None,
         missing_information=[],
         extraction_confidence="high",
+        constraints=[],
+        budget_notes=None,
     )
 
 # ------------------------------------------------------------------
