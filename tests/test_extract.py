@@ -25,7 +25,7 @@ def valid_request_payload():
 def mock_extracted_brief():
     """A sample ClientBrief object returned by the mocked extractor."""
     return ClientBrief(
-        client_name="Sweet Treats Bakery",
+        company_name="Sweet Treats Bakery",
         business_type="Food & Beverage",
         project_type="Mobile App",
         requested_features=["online ordering", "loyalty program"],
@@ -48,7 +48,7 @@ def test_extract_brief_success(mock_extract, valid_request_payload, mock_extract
 
     assert response.status_code == 200
     data = response.json()
-    assert data["client_name"] == "Sweet Treats Bakery"
+    assert data["company_name"] == "Sweet Treats Bakery"
     assert data["budget"] == 5000.0
     assert data["extraction_confidence"] == "high"
     mock_extract.assert_awaited_once_with(valid_request_payload["message"])
@@ -93,6 +93,18 @@ def test_extraction_rules_are_separate_from_client_message(
     call = mock_generate.await_args.kwargs
     assert call["contents"] == f"CLIENT MESSAGE:\n{message}"
     assert call["config"].system_instruction == EXTRACTION_INSTRUCTIONS
+
+
+def test_extraction_instructions_cover_regression_fields():
+    """Keep instructions aligned with fields that previously regressed."""
+    instructions = " ".join(EXTRACTION_INSTRUCTIONS.split()).casefold()
+    assert "do not shorten" in instructions
+    assert '"ecommerce website" to only "ecommerce"' in instructions
+    assert "business type" in instructions
+    assert "do not omit a stated budget or currency" in instructions
+    assert "missing_information must not say that the budget is unknown" in (
+        instructions
+    )
 
 
 # ------------------------------------------------------------------
