@@ -100,7 +100,9 @@ async def extract_client_brief(message: str) -> ClientBrief:
                 response_mime_type="application/json",
                 response_schema=ClientBrief,
                 temperature=0.1,
-            ),
+                automatic_function_calling=types.AutomaticFunctionCallingConfig(
+                disable=True
+            )),
         )
         
         if not response.parsed:
