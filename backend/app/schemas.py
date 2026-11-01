@@ -18,13 +18,14 @@ class ClientBriefRequest(BaseModel):
 
 class ClientBrief(BaseModel):
     company_name: str | None = Field(
-    default=None,
-    description=(
-        "The name of the company or business associated "
-        "with the project. For example, Oak & Home. "
-        "Return null if no company name is provided."
+        description=(
+            "The explicitly stated name of the company or business "
+            "associated with the project. Extract names such as "
+            "'Oak & Home' from phrases like 'I own a furniture company "
+            "called Oak & Home'. Do not use the owner's personal name. "
+            "Return null if no business name is stated."
+        )
     )
-)
     business_type: str | None = None
     project_type: str
     requested_features: list[str]
