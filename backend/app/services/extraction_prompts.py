@@ -18,8 +18,12 @@ FOLLOW THESE RULES:
   "ecommerce website" to only "ecommerce".
 - Preserve the stated business type, such as "furniture company",
   rather than replacing it with a broader category like "furniture".
-- Use company_name only for an explicitly named business, not an
-  owner's personal name.
+- Extract an explicitly named business as company_name, including
+  when it appears after words like "called" or "named".
+- Example: "I own a furniture company called Oak & Home" means
+  company_name is "Oak & Home".
+- Return company_name as null only when no business name is stated.
+- Never substitute the owner's personal name for the company name.
 
 2. CONSISTENCY
 - Use consistent terminology for business types and project types.
