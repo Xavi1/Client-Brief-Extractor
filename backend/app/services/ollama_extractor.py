@@ -39,6 +39,7 @@ async def extract_client_brief_local(message: str) -> ClientBrief:
                 }
             ],
             format=ClientBrief.model_json_schema(),
+            think=False,
             options={
                 "temperature": 0
             }
