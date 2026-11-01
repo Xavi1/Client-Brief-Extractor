@@ -47,6 +47,7 @@ def evaluate_result(case: dict, result) -> list[tuple[str, bool, str]]:
             "forbidden_values",
             "contains",
             "non_empty",
+            "accepted_values",
         ):
             continue
 
@@ -140,6 +141,29 @@ def evaluate_result(case: dict, result) -> list[tuple[str, bool, str]]:
                 not found,
                 f"Actual value: {actual_value!r}"
             ))
+
+    # Check whether actual fields match one of several
+    # acceptable values.
+    accepted_by_field = expected.get("accepted_values", {})
+
+    for field, allowed_values in accepted_by_field.items():
+        actual_value = actual.get(field)
+
+        normalized_allowed = [
+            normalize(value) for value in allowed_values
+        ]
+
+        passed = (
+            isinstance(actual_value, str)
+            and normalize(actual_value) in normalized_allowed
+        )
+
+        checks.append((
+            f"{field} matches an accepted value",
+            passed,
+            f"Expected one of: {allowed_values}. "
+            f"Actual: {actual_value!r}"
+        ))
 
     return checks
 
