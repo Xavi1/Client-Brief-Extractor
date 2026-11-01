@@ -36,6 +36,9 @@ one feature: "product catalog".
 - If a client says they have not decided on something,
   represent that information as unknown.
 - Include important unknown information in missing_information.
+- Represent concrete deadlines using YYYY-MM-DD format.
+- Never convert vague expressions into concrete dates.
+- Preserve vague timing expressions in timeline_notes.
 
 5. MISSING INFORMATION
 - Identify important details needed to understand and scope
