@@ -92,5 +92,16 @@ Rules:
 - Only include budget in missing_information
   when the client has not provided an amount.
 
+11. BUDGET NOTES
+
+- Only populate budget_notes when the client explicitly
+  provides additional context about their budget.
+- Examples include budget flexibility, approximate amounts,
+  ranges, or financial conditions.
+- Do not repeat the numerical budget or currency.
+- Never include internal processing explanations.
+- If there are no additional budget qualifications,
+  return null.
+
 Return information matching the provided response schema.
 """
